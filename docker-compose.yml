@@ -1,0 +1,14 @@
+services:
+  bookforge:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      BOOKFORGE_MAX_MB: "25"
+      BOOKFORGE_DATA: "/data"
+    volumes:
+      - bookforge_data:/data
+    restart: unless-stopped
+
+volumes:
+  bookforge_data:

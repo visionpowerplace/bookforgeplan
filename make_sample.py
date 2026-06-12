@@ -1,0 +1,190 @@
+"""Generates a realistic author-submitted manuscript (.docx) to exercise the
+formatter end-to-end. Plain Heading-1 chapters, bold pull-quote lines,
+'Your ... Action Step' triggers, and bullet lists -- i.e. messy real input.
+Text from the supplied sample (You Can Do It).
+"""
+from docx import Document
+from docx.shared import Pt
+
+
+def H(doc, t):       # chapter / section heading
+    doc.add_heading(t, level=1)
+
+def P(doc, t):       # body paragraph
+    doc.add_paragraph(t)
+
+def Q(doc, t):       # bold pull-quote line
+    p = doc.add_paragraph(); r = p.add_run(t); r.bold = True
+
+def STEP(doc, t):    # action-step trigger (bold)
+    p = doc.add_paragraph(); r = p.add_run(t); r.bold = True
+
+def B(doc, t):       # bullet
+    doc.add_paragraph(t, style="List Bullet")
+
+
+doc = Document()
+
+# ---- front matter ----
+H(doc, "Before You Begin")
+P(doc, "This book found you for a reason.")
+P(doc, "Perhaps you are standing at a crossroads, facing a mountain that seems impossible to climb. Maybe you have been knocked down so many times that staying down feels easier than getting back up. Or perhaps there is a dream inside you that whispers in the quiet moments, a dream you have been too afraid to chase.")
+P(doc, "Whatever brought you here, know this: you were built for more than you have settled for.")
+P(doc, "This is not just another motivational book designed to excite you for a moment and fade away. This is a call to action. A spiritual awakening. A practical guide to transforming the whisper of possibility into the roar of achievement.")
+P(doc, "Within these pages, you will discover that the power you have been searching for externally has been dwelling within you all along.")
+P(doc, "The journey ahead is short, but it can change everything if you allow it to. Read with an open heart. Read with a willing spirit. And most importantly, read with the commitment to take action.")
+P(doc, "Because you can do it. And it is time you believed that too.")
+
+# ---- chapters ----
+H(doc, "The Lie You've Been Told")
+P(doc, "Let's start with a hard truth: somewhere along the way, you were taught to doubt yourself.")
+P(doc, "Maybe it was a parent who said you were not smart enough. A teacher who overlooked your potential. A friend who laughed at your dreams. Or perhaps it was life itself, through rejection, failure, or disappointment, that convinced you success belongs to other people but not to you.")
+P(doc, "This is the great lie: that some people are destined for greatness while others are meant to watch from the sidelines.")
+P(doc, "But here's the truth that will set you free:")
+Q(doc, "You are not a finished product. You are a work in progress, and the masterpiece version of you is waiting to emerge.")
+P(doc, "Every person you admire started exactly where you are now, filled with doubt, fear, and uncertainty. The difference was not talent, luck, or opportunity.")
+P(doc, "The difference was a decision.")
+P(doc, "They chose to reject the lie and embrace a different story. One where they were the hero, not the victim.")
+STEP(doc, "Your First Action Step")
+P(doc, "Take out a piece of paper. Write down three limiting beliefs you have been carrying about yourself.")
+P(doc, "Examples:")
+B(doc, "I am not smart enough.")
+B(doc, "Success is not for people like me.")
+B(doc, "I have tried before and failed.")
+P(doc, "Now write the truth beside each one:")
+B(doc, "I am capable of learning anything I commit to.")
+B(doc, "Success is my birthright, and I claim it.")
+B(doc, "Every failure brought me closer to this breakthrough.")
+P(doc, "This is not positive thinking. This is mental reprogramming. What you believe shapes what you become.")
+
+H(doc, "The Power of Decision")
+P(doc, "Nothing changes until you decide to change. Not hope. Not wishing. Not dreaming. Decision.")
+P(doc, "A decision serves as a clear point of determination or commitment. It is the moment you stop entertaining both sides and commit fully to one direction. It is when retreating is no longer an option.")
+P(doc, "Every breakthrough in your life began with a decision. The decision to start. The decision to leave. The decision to fight for yourself when no one else would.")
+P(doc, "Indecision keeps you trapped between two worlds, the life you are living and the life you desire. Nothing grows in that space.")
+P(doc, "Decide today.")
+STEP(doc, "Your Second Action Step")
+P(doc, "What is the one thing you have been putting off that could change the trajectory of your life?")
+P(doc, "Write it down. Say it out loud. \u201CI have decided to ___.\u201D")
+P(doc, "Take one small action toward it within the next 24 hours. Momentum begins with movement.")
+
+H(doc, "Faith Over Fear")
+P(doc, "Let's address the elephant in the room: you're afraid. Afraid of failure. Afraid of success. Afraid of what people will think. Afraid of wasting time, energy, and resources on something that might not work out.")
+P(doc, "Good. That fear means you're on the right track.")
+P(doc, "Fear is not a stop sign; it's a compass. It points you toward the very thing you need to do to grow. The absence of fear means you're playing too small. The presence of fear means you're stretching beyond your comfort zone into the territory where transformation happens.")
+Q(doc, "Faith is not the absence of fear. Faith is taking the step anyway, trusting that the ground will rise up to meet you.")
+P(doc, "There's a spiritual principle at work here: when you align yourself with a purpose greater than your fear, the universe conspires to support you. Call it God, call it the Universe, call it the Law of Attraction. It doesn't matter what you name it. What matters is that you trust it.")
+P(doc, "You weren't given this dream to torture you. You were given this dream to fulfill you. And everything you need to make it happen already exists. You just need to have the faith to reach for it.")
+STEP(doc, "Your Third Action Step")
+P(doc, "Create a \u201CFaith File.\u201D This is a collection of evidence that proves you can do hard things.")
+P(doc, "Write down five times in your life when you faced fear and did it anyway. Times when the odds were against you, but you pushed through.")
+P(doc, "Keep this list somewhere visible. When fear creeps in, and it will, read this list and remind yourself: I have survived 100% of my worst days. I have a perfect track record. I can do this too.")
+
+H(doc, "The Action Imperative")
+P(doc, "Inspiration without action is entertainment.")
+P(doc, "You can read every self-help book ever written, watch every motivational video on the internet, and attend every seminar available. But if you don't take action, nothing changes.")
+P(doc, "The gap between where you are and where you want to be is not filled with knowledge only. It is filled with action. Imperfect, messy, sometimes-wrong-but-always-forward action.")
+P(doc, "Stop waiting for perfect conditions. Stop waiting to feel ready. Stop waiting for permission from people who aren't even qualified to give it.")
+Q(doc, "The universe doesn't reward the best ideas. It rewards the people who take action on their ideas.")
+P(doc, "Think about the most successful people in any field. They're not necessarily the most talented or the most intelligent. They're the most persistent. They're the ones who showed up every single day and took action, even when they didn't feel like it.")
+P(doc, "Action creates clarity. When you move, the fog lifts. When you stand still, overthinking paralyzes you.")
+STEP(doc, "Your Fourth Action Step")
+P(doc, "Create a \u201CNon-Negotiable Daily Action\u201D ritual. This is one specific action, no matter how small, that you will take every single day toward your goal.")
+B(doc, "Want to write a book? Write 200 words every day.")
+B(doc, "Want to get healthy? Move your body for 15 minutes every day.")
+B(doc, "Want to build a business? Reach out to one potential client every day.")
+P(doc, "Small, consistent actions compound into extraordinary results. The key word is consistent.")
+
+H(doc, "Rewriting Your Story")
+P(doc, "Your past does not define your future unless you let it.")
+P(doc, "So many people are stuck in old narratives. I'm not good with money. Relationships never work out for me. Success runs in other families, not mine. These stories feel true because you've repeated them so many times. But they're not truth, they're habits of thought.")
+P(doc, "And habits can be broken.")
+P(doc, "Every spiritual tradition teaches the same lesson: you are not your circumstances. You are not your mistakes. You are the consciousness observing all of those things. And from that place of awareness, you have the power to choose a different story.")
+Q(doc, "The story you tell yourself about yourself becomes your reality. Change the story, change your life.")
+P(doc, "What if every closed door was redirecting you toward something better? What if the universe wasn't punishing you, it was positioning you?")
+STEP(doc, "Your Fifth Action Step")
+P(doc, "Write your new story. On a blank page, complete this sentence: I am someone who ___.")
+P(doc, "Not I want to be or I hope to be. Present tense. As if it's already true.")
+B(doc, "I am someone who honors my commitments.")
+B(doc, "I am someone who attracts abundance.")
+B(doc, "I am someone who creates beautiful things.")
+P(doc, "Read this statement every morning. Let it become the lens through which you see yourself and your potential.")
+
+H(doc, "The Impossibility Mindset")
+P(doc, "What would you attempt if you knew you could not fail?")
+P(doc, "Take a moment with that question. Don't rush past it. Really let it sink in.")
+P(doc, "The dreams that surface when you ask yourself this question are not random. They're breadcrumbs from your soul, clues to your purpose, whispers from the Divine about what you were put on this earth to do.")
+P(doc, "Here's the radical truth: impossible is a matter of perspective, not reality.")
+P(doc, "Running a four-minute mile was impossible until Roger Bannister did it in 1954. Then, within two years, dozens of others broke the same barrier. The physical limitation didn't change, the belief about what was possible changed.")
+Q(doc, "The only limits that exist are the ones you accept. And you don't have to accept any of them.")
+P(doc, "Living from an impossibility mindset means you stop asking Is this possible? and start asking How can I make this possible? It's a shift from passive doubt to active problem-solving.")
+STEP(doc, "Your Sixth Action Step")
+P(doc, "Make an \u201CImpossible List.\u201D Write down three things that feel impossible to you right now. Not unlikely, impossible.")
+P(doc, "Then, next to each one, write this: How can I make this possible?")
+P(doc, "Don't answer the question yet. Just ask it. Let your mind work on it in the background.")
+
+H(doc, "Embrace the Struggle")
+P(doc, "Let's get real for a moment: this journey won't be easy.")
+P(doc, "There will be days when you want to quit. Days when nothing goes according to plan. Days when you question whether any of this is worth it. And that's okay. Those days are part of the process, not evidence that you're on the wrong path.")
+P(doc, "The struggle is where the strength is built. The pressure is what creates the diamond. The fire is what purifies the gold.")
+Q(doc, "Your breakdown is your breakthrough in disguise. What feels like falling apart is actually falling into place.")
+P(doc, "When challenges rise in life, don't interpret it as a sign to quit. Interpret it as a sign that you're leveling up. You're shedding an old version of yourself to make room for who you're becoming.")
+STEP(doc, "Your Seventh Action Step")
+P(doc, "Create a \u201CWhen-Then\u201D plan for when struggle hits. Anticipate the moments of weakness and decide in advance how you'll respond.")
+B(doc, "When I want to quit, then I will read my Faith File and remember who I am.")
+B(doc, "When I feel overwhelmed, then I will take one deep breath and focus on the next single step.")
+B(doc, "When doubt creeps in, then I will reach out to my accountability partner or mentor.")
+P(doc, "Decisions made in advance are easier to execute than decisions made in the heat of emotion.")
+
+H(doc, "You Are Enough")
+P(doc, "Before we go any further, we need to address the deepest lie of all: the belief that you are not enough.")
+P(doc, "Not smart enough. Not talented enough. Not worthy enough. Not ready enough.")
+P(doc, "This lie keeps more people stuck than any external obstacle ever could. Because if you don't believe you're enough, you'll sabotage every opportunity that comes your way.")
+Q(doc, "You are enough. Right now. Not after you achieve the goal. Not after you fix all your flaws. Not after you prove yourself to anyone.")
+P(doc, "This isn't a self-help platitude. This is spiritual truth. You were created with intention, designed with purpose, and equipped with everything you need to fulfill your destiny.")
+P(doc, "Your worthiness is not conditional. It's not something you earn through performance or lose through failure. It's your birthright.")
+STEP(doc, "Your Eighth Action Step")
+P(doc, "Stand in front of a mirror. Look yourself in the eyes. And say out loud:")
+P(doc, "I am enough. I am worthy. I am capable. I am deserving of every good thing life has to offer.")
+P(doc, "Say it even if you don't believe it yet. Especially if you don't believe it yet. Because repetition rewires belief. Do this every day for the next 30 days. Watch what changes.")
+
+H(doc, "Momentum Is Everything")
+P(doc, "Physics teaches us that an object in motion tends to stay in motion. The same principle applies to your life.")
+P(doc, "Starting is the hardest part. That first step takes monumental effort because you're fighting inertia, fear, and every excuse your mind can conjure. But once you're moving, staying in motion becomes exponentially easier.")
+P(doc, "This is why your daily non-negotiable action is so critical. It's not just about the immediate result; it's about building momentum. Each small win creates energy for the next step.")
+Q(doc, "Success is not a single event. It's a series of small, consistent actions compounded over time.")
+P(doc, "Energy follows attention. What you consistently focus on expands. What you consistently do becomes who you are.")
+P(doc, "So protect your momentum like it's sacred. Because it is. Don't let a bad day become a bad week. Stumble if you must, but get back up immediately.")
+STEP(doc, "Your Ninth Action Step")
+P(doc, "Start a victory journal. At the end of each day, write down three wins, no matter how small.")
+B(doc, "I kept my commitment to my daily action.")
+B(doc, "I had a difficult conversation I'd been avoiding.")
+B(doc, "I chose to encourage myself instead of criticizing myself.")
+P(doc, "Celebrating progress, even tiny progress, trains your brain to recognize momentum. And what gets recognized gets repeated.")
+
+H(doc, "Your Moment Is Now")
+P(doc, "We've covered a lot of ground together. But all of it means nothing if you close this book and return to business as usual.")
+P(doc, "This is the moment. Not someday. Not when you're more prepared. Not when the timing is better. Now.")
+P(doc, "Maybe you've been searching for permission to go after your dreams, consider this your permission. Maybe you've been waiting for a sign, this is it. Maybe you needed someone to believe in you before you could believe in yourself. I believe in you.")
+P(doc, "But more importantly, you have to believe in you.")
+Q(doc, "Will you accept defeat, or will you rise up and claim the life that's waiting for you?")
+P(doc, "Your dreams are not random. They're roadmaps. Your struggles are not punishments. They're preparation. Your past is not a prison. It's proof that you're a survivor.")
+P(doc, "And if you've survived everything that's happened up until now, you can absolutely handle what comes next.")
+STEP(doc, "Your Final Action Step")
+P(doc, "Before you put this book down, commit to one thing. Just one. Not ten. Not five. One thing you will do differently starting today.")
+P(doc, "Write it down. Tell someone about it. Create accountability. And then do it.")
+P(doc, "Step boldly into the life you were meant to live. Take the leap. Make the call. Start the project. Have the conversation. The world is waiting for what only you can give.")
+
+# ---- closing ----
+H(doc, "A Final Word")
+P(doc, "Thank you for investing your time in these pages. I didn't write this book to entertain you or to fill your head with empty promises. I wrote it because someone needed to hear this message today, and that someone is you.")
+P(doc, "Remember:")
+B(doc, "Your current situation is not your final destination.")
+B(doc, "Your past failures are not predictors of your future success.")
+B(doc, "Your doubts are not facts, they're feelings, and feelings change.")
+B(doc, "Your dreams are not impossible, they're invitations.")
+P(doc, "This is your time. This is your turn. This is your moment to rise.")
+P(doc, "I'm cheering for you. And most importantly, you have everything within you that you need to succeed.")
+
+doc.save("/home/claude/sample_manuscript.docx")
+print("wrote sample_manuscript.docx")

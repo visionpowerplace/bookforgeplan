@@ -1,0 +1,118 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your studio — BookForge</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head><body>
+<nav class="nav"><a class="brand" href="/"><span class="mark"></span>BookForge</a>
+  <div class="nav-links">
+    <span class="muted" id="hello"></span>
+    <a href="#" onclick="logout();return false;">Log out</a>
+  </div></nav>
+
+<div class="wrap app-grid">
+  <!-- create -->
+  <div class="panel">
+    <h2>Format a book</h2>
+    <p class="muted" style="margin:4px 0 16px;font-size:15px">Upload a .docx manuscript.</p>
+    <div class="drop" id="drop" onclick="file.click()">
+      <b id="dropname">Drop your .docx here</b>
+      <span>or click to choose</span>
+    </div>
+    <input id="file" type="file" accept=".docx" style="display:none">
+
+    <label for="title">Title</label><input id="title" placeholder="Book title">
+    <div class="row2">
+      <div><label for="author">Author</label><input id="author" placeholder="Author"></div>
+      <div><label for="year">Year</label><input id="year" placeholder="2026"></div>
+    </div>
+    <div class="row2">
+      <div><label for="trim">Trim size</label><select id="trim">
+        <option value="4x6">4 × 6 in</option><option value="5x8">5 × 8 in</option>
+        <option value="5.25x8">5.25 × 8 in</option><option value="5.5x8.5">5.5 × 8.5 in</option>
+        <option value="6x9" selected>6 × 9 in</option><option value="8.5x11">8.5 × 11 in</option>
+      </select></div>
+      <div><label for="mode">Interior</label><select id="mode">
+        <option value="bw" selected>Black & white</option><option value="color">Color</option>
+      </select></div>
+    </div>
+    <div class="row2">
+      <div><label for="font">Typeface</label><select id="font">
+        <option value="classic" selected>Oswald + EB Garamond</option>
+        <option value="editorial">Playfair + Lora</option>
+        <option value="modern">Montserrat + Lora</option>
+        <option value="bold">Anton + EB Garamond</option>
+      </select></div>
+      <div><label for="art">Chapter art</label><select id="art">
+        <option value="emblem" selected>Emblem crest</option>
+        <option value="photo">Real photo</option>
+        <option value="photographic">AI · Photographic</option>
+        <option value="cinematic">AI · Cinematic</option>
+        <option value="watercolor">AI · Watercolor</option>
+      </select></div>
+    </div>
+    <button class="btn accent" id="go" style="width:100%;margin-top:20px" onclick="submitBook()">Format my book</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- library -->
+  <div class="lib">
+    <h2>My library</h2>
+    <div id="books"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let chosen=null;
+const drop=$("drop");
+$("file").addEventListener("change",e=>{chosen=e.target.files[0];if(chosen)$("dropname").textContent=chosen.name;});
+["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag");}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag");}));
+drop.addEventListener("drop",e=>{chosen=e.dataTransfer.files[0];if(chosen)$("dropname").textContent=chosen.name;});
+
+function setStat(m,bad){const s=$("status");s.innerHTML=(bad?"":'<span class="spin"></span>')+m;
+  s.classList.add("on");s.style.color=bad?"var(--bad)":"var(--ink-2)";}
+
+async function me(){try{const r=await fetch("/api/me");if(r.ok){const j=await r.json();
+  $("hello").textContent="Hi, "+(j.name||j.email);}}catch(e){}}
+async function logout(){await fetch("/auth/logout",{method:"POST"});location.href="/";}
+
+function pill(s){return `<span class="pill ${s}">${s}</span>`;}
+async function loadLib(){
+  try{
+    const r=await fetch("/api/library"); const books=await r.json();
+    const el=$("books");
+    if(!books.length){el.innerHTML='<div class="empty">No books yet. Format your first one →</div>';return;}
+    el.innerHTML=books.map(b=>`<div class="book">
+      <div class="cov"></div>
+      <div class="meta"><b>${esc(b.title||"Untitled")}</b>
+        <span>${esc(b.author||"")} · ${b.trim} · ${b.art_style}${b.pages?(" · "+b.pages+"pp"):""}</span></div>
+      ${b.status==="done"
+        ? `<a class="btn accent" href="/api/books/${b.id}/download">Download</a>`
+        : pill(b.status)}
+    </div>`).join("");
+    if(books.some(b=>b.status==="queued"||b.status==="rendering")) setTimeout(loadLib,2500);
+  }catch(e){}
+}
+function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+async function submitBook(){
+  if(!chosen){setStat("Please choose a .docx file first.",true);return;}
+  $("go").disabled=true; setStat("Uploading…");
+  const fd=new FormData();
+  fd.append("file",chosen);
+  ["title","author","year","trim","mode","font"].forEach(k=>fd.append(k,$(k).value));
+  fd.append("art_style",$("art").value);
+  fd.append("crop_marks","false");
+  try{
+    const r=await fetch("/api/jobs",{method:"POST",body:fd});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){setStat(j.detail||("Error "+r.status),true);$("go").disabled=false;return;}
+    setStat("In your library — formatting now…");
+    $("go").disabled=false;
+    loadLib();
+  }catch(e){setStat("Couldn’t reach the server.",true);$("go").disabled=false;}
+}
+me(); loadLib();
+</script></body></html>

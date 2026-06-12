@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Log in — BookForge</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head><body>
+<nav class="nav"><a class="brand" href="/"><span class="mark"></span>BookForge</a>
+  <div class="nav-links"><a href="/signup">Create account</a></div></nav>
+<div class="auth-wrap"><div class="auth">
+  <h1>Welcome back</h1>
+  <p class="sub">Log in to format and download your books.</p>
+  <div class="err" id="err"></div>
+  <label for="email">Email</label>
+  <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+  <label for="pw">Password</label>
+  <input id="pw" type="password" autocomplete="current-password" placeholder="••••••••">
+  <button class="btn accent" id="go" onclick="submit()">Log in</button>
+  <div class="alt-line">New here? <a href="/signup">Create an account</a></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+function err(m){const e=$("err");e.textContent=m;e.classList.add("on");}
+async function submit(){
+  $("err").classList.remove("on"); $("go").disabled=true;
+  try{
+    const r=await fetch("/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email:$("email").value,password:$("pw").value})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){err(j.detail||"Login failed.");$("go").disabled=false;return;}
+    location.href="/app";
+  }catch(e){err("Couldn’t reach the server.");$("go").disabled=false;}
+}
+$("pw").addEventListener("keydown",e=>{if(e.key==="Enter")submit();});
+</script></body></html>
