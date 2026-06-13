@@ -29,7 +29,10 @@ app = FastAPI(title="BookForge")
 app.mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="static")
 store = JobStore()
 jobs = JobManager(store)
-db.init()
+try:
+    db.init()
+except Exception as e:                      # surface clearly in logs, don't die silently
+    print(f"[startup] DB init warning: {type(e).__name__}: {e}")
 
 
 def page(name):
@@ -46,7 +49,7 @@ def require_user(request: Request):
 
 # ---- pages ----------------------------------------------------------------
 
-@app.get("/", response_class=HTMLResponse)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
 def landing(request: Request):
     if auth.current_user(request):
         return RedirectResponse("/app", status_code=303)

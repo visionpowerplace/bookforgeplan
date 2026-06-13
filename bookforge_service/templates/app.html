@@ -21,11 +21,17 @@
     </div>
     <input id="file" type="file" accept=".docx" style="display:none">
 
-    <label for="title">Title</label><input id="title" placeholder="Book title">
+    <label for="title">Book title</label><input id="title" placeholder="Book title">
+    <label for="subtitle">Subtitle</label><input id="subtitle" placeholder="Optional subtitle">
     <div class="row2">
       <div><label for="author">Author</label><input id="author" placeholder="Author"></div>
       <div><label for="year">Year</label><input id="year" placeholder="2026"></div>
     </div>
+    <div class="row2">
+      <div><label for="isbn">ISBN</label><input id="isbn" placeholder="978-…"></div>
+      <div><label for="publisher">Publisher</label><input id="publisher" placeholder="Publisher"></div>
+    </div>
+    <label for="epigraph">Epigraph (optional)</label><input id="epigraph" placeholder="No matter where you are…">
     <div class="row2">
       <div><label for="trim">Trim size</label><select id="trim">
         <option value="4x6">4 × 6 in</option><option value="5x8">5 × 8 in</option>
@@ -44,14 +50,22 @@
         <option value="bold">Anton + EB Garamond</option>
       </select></div>
       <div><label for="art">Chapter art</label><select id="art">
-        <option value="emblem" selected>Emblem crest</option>
-        <option value="photo">Real photo</option>
+        <option value="emblem" selected>Emblem crest (no API)</option>
+        <option value="photo">Real photo (Pexels/Unsplash)</option>
         <option value="photographic">AI · Photographic</option>
         <option value="cinematic">AI · Cinematic</option>
         <option value="watercolor">AI · Watercolor</option>
+        <option value="painterly">AI · Painterly</option>
+        <option value="lineart">AI · Line art</option>
+        <option value="abstract">AI · Abstract</option>
       </select></div>
     </div>
-    <button class="btn accent" id="go" style="width:100%;margin-top:20px" onclick="submitBook()">Format my book</button>
+    <label class="checkrow" style="display:flex;align-items:flex-start;gap:10px;margin-top:16px;
+      font-family:inherit;text-transform:none;letter-spacing:0;color:var(--ink-2);font-size:15px">
+      <input type="checkbox" id="crop" style="width:auto;margin-top:3px">
+      <span>Add crop marks (offset print). Leave off for a KDP-ready interior.</span>
+    </label>
+    <button class="btn accent" id="go" style="width:100%;margin-top:18px" onclick="submitBook()">Format my book</button>
     <div class="status" id="status"></div>
   </div>
 
@@ -102,9 +116,9 @@ async function submitBook(){
   $("go").disabled=true; setStat("Uploading…");
   const fd=new FormData();
   fd.append("file",chosen);
-  ["title","author","year","trim","mode","font"].forEach(k=>fd.append(k,$(k).value));
+  ["title","subtitle","author","year","isbn","publisher","epigraph","trim","mode","font"].forEach(k=>fd.append(k,$(k).value));
   fd.append("art_style",$("art").value);
-  fd.append("crop_marks","false");
+  fd.append("crop_marks",$("crop").checked?"true":"false");
   try{
     const r=await fetch("/api/jobs",{method:"POST",body:fd});
     const j=await r.json().catch(()=>({}));
