@@ -10,7 +10,7 @@ Accounts + books live in SQLite (db.py); sessions are signed cookies (auth.py).
 import os
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from bookforge.model import BookMeta
@@ -190,10 +190,14 @@ def download(book_id: str, request: Request):
     b = db.get_book(book_id)
     if not b or b["user_id"] != u["id"]:
         raise HTTPException(404, "Not found.")
-    if b["status"] != "done" or not b["download_path"] or not os.path.exists(b["download_path"]):
+    if b["status"] != "done":
+        raise HTTPException(409, "This book isn't ready yet.")
+    pdf = db.get_book_pdf(book_id)
+    if not pdf:
         raise HTTPException(409, "This book isn't ready yet.")
     fname = (b["title"] or "book").replace(" ", "_") + ".pdf"
-    return FileResponse(b["download_path"], media_type="application/pdf", filename=fname)
+    return Response(content=pdf, media_type="application/pdf",
+                    headers={"Content-Disposition": f'attachment; filename="{fname}"'})
 
 
 # ---- ops ------------------------------------------------------------------
